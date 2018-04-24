@@ -21,6 +21,7 @@
     restart_policy: "{{ container.restart_policy | default('always') }}"
     network_mode: "{{ container.network_mode | default('bridge') }}"
     volumes: "{{ container.volumes | default([]) }} + [ '/etc/localtime:/etc/localtime:ro' ]"
+    user: "{{ container.user | default() }}"
     ports: "{{ container.ports | default([]) }}"
     env: "{{ container.env | default({}) }}"
     command: "{{ container.command | default([]) }}"
