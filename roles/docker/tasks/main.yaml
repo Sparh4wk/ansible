@@ -1,0 +1,30 @@
+---
+- name: Install Docker
+  import_tasks: install.yaml
+
+- name: Ensure volumes to be mounted exist on host
+  tags: docker
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+  with_items:
+    "{{ docker|map(attribute='volumes')|flatten|map('regex_search', '[^\\:]*')|list|unique|sort }}"
+    
+- name: Create Docker containers
+  tags: docker
+  docker_container:
+    name: "{{ container.name }}"
+    image: "{{ container.image }}"
+    state: "{{ container.state | default('started') }}"
+    restart_policy: "{{ container.restart_policy | default('always') }}"
+    network_mode: "{{ container.network_mode | default('bridge') }}"
+    volumes: "{{ container.volumes | default([]) }} + [ '/etc/localtime:/etc/localtime:ro' ]"
+    ports: "{{ container.ports | default([]) }}"
+    env: "{{ container.env | default({}) }}"
+    command: "{{ container.command | default([]) }}"
+  loop: "{{ docker }}"
+  loop_control:
+    loop_var: container
+    label: "{{ container.name }}"

@@ -1,0 +1,4 @@
+---
+- import_tasks: secure-ssh.yaml
+- import_tasks: sudo.yaml
+- import_tasks: zsh.yaml

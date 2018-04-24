@@ -1,0 +1,54 @@
+---
+- name: Ensure required packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zsh
+    - virtualenvwrapper
+
+- name: Download Antigen
+  get_url:
+    url: https://git.io/antigen
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "u=rw,g=rw"
+  with_items:
+    - dest: /root/.antigen.zsh
+      owner: root
+      group: root
+    - dest: "{{ homedir }}/.antigen.zsh"
+      owner: "{{ user }}"
+      group: "{{ user }}"
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: configure ZSH configs
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - src: global.zshrc.j2
+      dest: /root/.zshrc
+      owner: root
+      group: root
+      mode: "u=rw,g=r"
+    - src: personal.zshrc.j2
+      dest: "{{ homedir }}/.zshrc"
+      owner: "{{ user }}"
+      group: "{{ user }}"
+      mode: "u=rw,g=r"
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: Change default shell for root and user
+  user:
+    name: "{{ item }}"
+    shell: "{{ zsh_path }}"
+  with_items:
+    - root
+    - "{{ user }}"

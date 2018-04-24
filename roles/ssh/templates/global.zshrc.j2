@@ -1,0 +1,25 @@
+{% for key, value in global_zsh_environment.iteritems() %}
+export {{ key|upper }}="{{ value }}"
+{% endfor %}
+
+source $HOME/.antigen.zsh
+
+antigen use oh-my-zsh
+
+antigen bundle pip
+antigen bundle command-not-found
+antigen bundle dirhistory
+antigen bundle systemd
+antigen bundle sudo
+antigen bundle docker
+antigen bundle virtualenvwrapper
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-history-substring-search
+
+antigen theme kennethreitz
+antigen apply
+
+bindkey '^[OA' history-substring-search-up
+bindkey '^[OB' history-substring-search-down
+bindkey '^[' sudo-command-line
