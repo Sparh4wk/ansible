@@ -1,0 +1,277 @@
+---
+- name: Ensure volumes to be mounted exist on host
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner | default(user) }}"
+    group: "{{ item.group | default(user) }}"
+  with_items:
+    - { path: /data/config/aria2 }
+    - { path: /data/config/asf }
+    - { path: /data/config/duplicati }
+    - { path: /data/config/jackett }
+    - { path: /data/config/jdownloader2 }
+    - { path: /data/config/qbittorrent }
+    - { path: /data/config/radarr }
+    - { path: /data/config/sonarr }
+    - { path: /data/config/syncthing }
+    - { path: /data/downloads }
+    - { path: /data/kamera/najezd }
+    - { path: /data/kamera/pristresek }
+    - { path: /data/kamera/terasa }
+    - { path: /data/kamera/vpredu }
+    - { path: /data/kamera/zahon }
+    - { path: /data/syncthing }
+  loop_control:
+    label: "{{ item.path }}"
+
+# Aria2c
+- name: Creating Aria2 container
+  docker_container:
+    name: aria2
+    image: abcminiuser/docker-aria2-with-webui
+    volumes:
+      - /data/downloads:/data
+      - /data/config/aria2:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 6880:80
+      - 6800:6800
+    env:
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      SECRET: F4ysBecV9Sr5qt5bVxtytehDT7PJ92RHd4u567kkQo9UmBpzQig3HmJvYejiw2A4
+
+# ArchiSteamFarm
+- name: Creating ArchiSteamFarm container
+  docker_container:
+    name: asf
+    image: justarchi/archisteamfarm
+    user: "{{ uid }}:{{ gid }}"
+    volumes:
+      - /data/config/asf:/app/config
+      - /etc/localtime:/etc/localtime:ro
+    restart_policy: on-failure
+    state: stopped
+
+# Duplicati
+- name: Creating Duplicati container
+  docker_container:
+    name: duplicati
+    image: linuxserver/duplicati
+    volumes:
+      - /data/config/duplicati:/config
+      - /data:/source
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8200:8200
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
+
+# Jackett
+- name: Creating Jackett container
+  docker_container:
+    name: jackett
+    image: linuxserver/jackett
+    state: stopped
+    restart_policy: on-failure
+    volumes:
+      - /data/config/jackett:/config
+      - /data/downloads:/downloads
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 9117:9117
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
+
+# JDownloader 2
+- name: Creating JDownloader2 container
+  docker_container:
+    name: jdownloader2
+    image: jlesage/jdownloader-2
+    volumes:
+      - /data/config/jdownloader2:/config
+      - /data/downloads:/output
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 5800:5800
+    env:
+      USER_ID: "{{ uid }}"
+      GROUP_ID: "{{ gid }}"
+
+# QBittorrent
+- name: Creating QBittorrent container
+  docker_container:
+    name: qbittorrent
+    image: linuxserver/qbittorrent
+    volumes:
+      - /data/config/qbittorrent:/config
+      - /data/downloads:/downloads
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8080:8080
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
+
+# Radarr
+- name: Creating Radarr container
+  docker_container:
+    name: radarr
+    image: linuxserver/radarr
+    volumes:
+      - /data/config/radarr:/config
+      - /data/downloads:/downloads
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 7878:7878
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
+
+# Samba
+- name: Creating Samba container
+  docker_container:
+    name: samba
+    image: dperson/samba
+    volumes:
+      - /data:/share/
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 139:139
+      - 445:445
+    env:
+      USERID: "{{ uid }}"
+      GROUPID: "{{ gid }}"
+    command:
+      - -s "data;/share;yes;no;yes"
+      - -g "hosts allow = 192.168.1."
+      - -g "acl allow execute always = yes"
+
+# Sonarr
+- name: Creating Sonarr container
+  docker_container:
+    name: sonarr
+    image: linuxserver/sonarr
+    volumes:
+      - /data/config/sonarr:/config
+      - /data/downloads:/downloads
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8989:8989
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
+
+# Syncthing
+- name: Creating Syncthing container
+  docker_container:
+    name: syncthing
+    image: linuxserver/syncthing
+    volumes:
+      - /data/config/syncthing:/config
+      - /data/syncthing:/data
+      - /etc/localtime:/etc/localtime:ro
+    network_mode: host
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
+
+# Kamera - Terasa
+- name: Creating Kamera_Terasa container
+  docker_container:
+    name: kamera-terasa
+    image: jrottenberg/ffmpeg
+    user: "{{ uid }}:{{ gid }}"
+    volumes:
+      - /data/kamera/terasa:/output
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - -loglevel error
+      - -rtsp_transport tcp
+      - -i rtsp://admin:1234567a@192.168.1.250:554//Streaming/Channels/1
+      - -c copy
+      - -segment_time 3600
+      - -segment_atclocktime 1
+      - -strftime 1
+      - -f segment /output/%d-%m_%H-%M.ts
+
+# Kamera - Vpredu
+- name: Creating Kamera_Vpredu container
+  docker_container:
+    name: kamera-vpredu
+    image: jrottenberg/ffmpeg
+    user: "{{ uid }}:{{ gid }}"
+    volumes:
+      - /data/kamera/vpredu:/output
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - -loglevel error
+      - -rtsp_transport tcp
+      - -i rtsp://admin:1234567a@192.168.1.251:554//Streaming/Channels/1
+      - -c copy
+      - -segment_time 3600
+      - -segment_atclocktime 1
+      - -strftime 1
+      - -f segment /output/%d-%m_%H-%M.ts
+
+# Kamera - Zahon
+- name: Creating Kamera_Zahon container
+  docker_container:
+    name: kamera-zahon
+    image: jrottenberg/ffmpeg
+    user: "{{ uid }}:{{ gid }}"
+    volumes:
+      - /data/kamera/zahon:/output
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - -loglevel error
+      - -rtsp_transport tcp
+      - -i rtsp://admin:1234567a@192.168.1.252:554//Streaming/Channels/1
+      - -c copy
+      - -segment_time 3600
+      - -segment_atclocktime 1
+      - -strftime 1
+      - -f segment /output/%d-%m_%H-%M.ts
+
+# Kamera - Pristresek
+- name: Creating Kamera_Pristresek container
+  docker_container:
+    name: kamera-pristresek
+    image: jrottenberg/ffmpeg
+    user: "{{ uid }}:{{ gid }}"
+    volumes:
+      - /data/kamera/pristresek:/output
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - -loglevel error
+      - -rtsp_transport tcp
+      - -i rtsp://admin:1234567a@192.168.1.253:554//Streaming/Channels/1
+      - -c copy
+      - -segment_time 3600
+      - -segment_atclocktime 1
+      - -strftime 1
+      - -f segment /output/%d-%m_%H-%M.ts
+
+# Kamera - Najezd
+- name: Creating Kamera_Najezd container
+  docker_container:
+    name: kamera-najezd
+    image: jrottenberg/ffmpeg
+    user: "{{ uid }}:{{ gid }}"
+    volumes:
+      - /data/kamera/najezd:/output
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - -loglevel error
+      - -rtsp_transport tcp
+      - -i rtsp://admin:1234567a@192.168.1.254:554//Streaming/Channels/1
+      - -c copy
+      - -segment_time 3600
+      - -segment_atclocktime 1
+      - -strftime 1
+      - -f segment /output/%d-%m_%H-%M.ts
