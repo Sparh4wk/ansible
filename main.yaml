@@ -1,5 +1,5 @@
 ---
-- hosts: dwarf
+- hosts: localhost
 
   vars_files:
     - vars/common.yaml
@@ -21,7 +21,7 @@
       loop_control:
         label: "{{ item.path }}"
 
-- hosts: all
+- hosts: localhost
 
   vars_files:
     - vars/common.yaml

@@ -2,8 +2,8 @@ gid: "{{ ansible_user_gid }}"
 uid: "{{ ansible_user_uid }}"
 
 mountpoints:
-  - path: /
-    src: UUID=574b5921-91aa-4a2f-925f-4fab7fe8c24e
+  - path: /data
+    src: UUID=e507e91d-0b7c-4ece-9f22-7c36b180d6c0
     fstype: btrfs
-    opts: subvol=@ # user,subvol=@
+    opts: user # user,subvol=@
     state: mounted

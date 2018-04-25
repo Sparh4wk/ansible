@@ -8,20 +8,25 @@
   with_items:
     - { path: /data/config/aria2 }
     - { path: /data/config/asf }
-    - { path: /data/config/duplicati }
+    #- { path: /data/config/duplicati }
+    - { path: /data/config/emby }
     - { path: /data/config/jackett }
     - { path: /data/config/jdownloader2 }
     - { path: /data/config/qbittorrent }
     - { path: /data/config/radarr }
+    - { path: /data/config/seafile }
     - { path: /data/config/sonarr }
-    - { path: /data/config/syncthing }
-    - { path: /data/downloads }
-    - { path: /data/kamera/najezd }
-    - { path: /data/kamera/pristresek }
-    - { path: /data/kamera/terasa }
-    - { path: /data/kamera/vpredu }
-    - { path: /data/kamera/zahon }
-    - { path: /data/syncthing }
+    #- { path: /data/config/syncthing }
+    - { path: /data/Downloads }
+    #- { path: /data/kamera/najezd }
+    #- { path: /data/kamera/pristresek }
+    #- { path: /data/kamera/terasa }
+    #- { path: /data/kamera/vpredu }
+    #- { path: /data/kamera/zahon }
+    - { path: /data/kamera }
+    - { path: /data/seafile }
+    - { path: /data/seafile }
+    #- { path: /data/syncthing }
   loop_control:
     label: "{{ item.path }}"
 
@@ -31,7 +36,7 @@
     name: aria2
     image: abcminiuser/docker-aria2-with-webui
     volumes:
-      - /data/downloads:/data
+      - /data/Downloads:/data
       - /data/config/aria2:/config
       - /etc/localtime:/etc/localtime:ro
     ports:
@@ -55,16 +60,31 @@
     state: stopped
 
 # Duplicati
-- name: Creating Duplicati container
+#- name: Creating Duplicati container
+#  docker_container:
+#    name: duplicati
+#    image: linuxserver/duplicati
+#    volumes:
+#      - /data/config/duplicati:/config
+#      - /data:/source
+#      - /etc/localtime:/etc/localtime:ro
+#    ports:
+#      - 8200:8200
+#    env:
+#      PGID: "{{ gid }}"
+#      PUID: "{{ uid }}"
+
+# Emby
+- name: Creating Emby container
   docker_container:
-    name: duplicati
-    image: linuxserver/duplicati
+    name: emby
+    image: emby/embyserver
     volumes:
-      - /data/config/duplicati:/config
-      - /data:/source
-      - /etc/localtime:/etc/localtime:ro
+      - /data/config/emby/:/config
+      - /data:/mnt/share1
     ports:
-      - 8200:8200
+      - 8096:8096
+      - 8920:8920
     env:
       PGID: "{{ gid }}"
       PUID: "{{ uid }}"
@@ -78,7 +98,7 @@
     restart_policy: on-failure
     volumes:
       - /data/config/jackett:/config
-      - /data/downloads:/downloads
+      - /data/Downloads:/downloads
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 9117:9117
@@ -93,7 +113,7 @@
     image: jlesage/jdownloader-2
     volumes:
       - /data/config/jdownloader2:/config
-      - /data/downloads:/output
+      - /data/Downloads:/output
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 5800:5800
@@ -108,7 +128,7 @@
     image: linuxserver/qbittorrent
     volumes:
       - /data/config/qbittorrent:/config
-      - /data/downloads:/downloads
+      - /data/Downloads:/downloads
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 6881:6881
@@ -125,7 +145,7 @@
     image: linuxserver/radarr
     volumes:
       - /data/config/radarr:/config
-      - /data/downloads:/downloads
+      - /data/Downloads:/downloads
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 7878:7878
@@ -152,6 +172,22 @@
       - -g "hosts allow = 192.168.1."
       - -g "acl allow execute always = yes"
 
+# Seafile
+- name: Creating Seafile container
+  docker_container:
+    name: seafile
+    image: seafileltd/seafile:latest
+    volumes:
+      - /data/seafile:/shared
+      - /data/config/seafile:/shared/seafile/conf
+    ports:
+      - 80:80
+      - 443:443
+    user: "{{ uid }}:{{ gid }}"
+    env:
+      SEAFILE_ADMIN_EMAIL: sp4rh4wk@gmail.com
+      SEAFILE_ADMIN_PASSWORD: Nede.230le
+
 # Sonarr
 - name: Creating Sonarr container
   docker_container:
@@ -159,7 +195,7 @@
     image: linuxserver/sonarr
     volumes:
       - /data/config/sonarr:/config
-      - /data/downloads:/downloads
+      - /data/Downloads:/downloads
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 8989:8989
@@ -168,108 +204,32 @@
       PUID: "{{ uid }}"
 
 # Syncthing
-- name: Creating Syncthing container
-  docker_container:
-    name: syncthing
-    image: linuxserver/syncthing
-    volumes:
-      - /data/config/syncthing:/config
-      - /data/syncthing:/data
-      - /etc/localtime:/etc/localtime:ro
-    network_mode: host
-    env:
-      PGID: "{{ gid }}"
-      PUID: "{{ uid }}"
+#- name: Creating Syncthing container
+#  docker_container:
+#    name: syncthing
+#    image: linuxserver/syncthing
+#    volumes:
+#      - /data/config/syncthing:/config
+#      - /data/syncthing:/data
+#      - /etc/localtime:/etc/localtime:ro
+#    network_mode: host
+#    env:
+#      PGID: "{{ gid }}"
+#      PUID: "{{ uid }}"
 
-# Kamera - Terasa
+# Kamera
 - name: Creating Kamera_Terasa container
   docker_container:
-    name: kamera-terasa
+    name: kamera
     image: jrottenberg/ffmpeg
     user: "{{ uid }}:{{ gid }}"
     volumes:
-      - /data/kamera/terasa:/output
+      - /data/kamera:/output
       - /etc/localtime:/etc/localtime:ro
     command:
       - -loglevel error
       - -rtsp_transport tcp
       - -i rtsp://admin:1234567a@192.168.1.250:554//Streaming/Channels/1
-      - -c copy
-      - -segment_time 3600
-      - -segment_atclocktime 1
-      - -strftime 1
-      - -f segment /output/%d-%m_%H-%M.ts
-
-# Kamera - Vpredu
-- name: Creating Kamera_Vpredu container
-  docker_container:
-    name: kamera-vpredu
-    image: jrottenberg/ffmpeg
-    user: "{{ uid }}:{{ gid }}"
-    volumes:
-      - /data/kamera/vpredu:/output
-      - /etc/localtime:/etc/localtime:ro
-    command:
-      - -loglevel error
-      - -rtsp_transport tcp
-      - -i rtsp://admin:1234567a@192.168.1.251:554//Streaming/Channels/1
-      - -c copy
-      - -segment_time 3600
-      - -segment_atclocktime 1
-      - -strftime 1
-      - -f segment /output/%d-%m_%H-%M.ts
-
-# Kamera - Zahon
-- name: Creating Kamera_Zahon container
-  docker_container:
-    name: kamera-zahon
-    image: jrottenberg/ffmpeg
-    user: "{{ uid }}:{{ gid }}"
-    volumes:
-      - /data/kamera/zahon:/output
-      - /etc/localtime:/etc/localtime:ro
-    command:
-      - -loglevel error
-      - -rtsp_transport tcp
-      - -i rtsp://admin:1234567a@192.168.1.252:554//Streaming/Channels/1
-      - -c copy
-      - -segment_time 3600
-      - -segment_atclocktime 1
-      - -strftime 1
-      - -f segment /output/%d-%m_%H-%M.ts
-
-# Kamera - Pristresek
-- name: Creating Kamera_Pristresek container
-  docker_container:
-    name: kamera-pristresek
-    image: jrottenberg/ffmpeg
-    user: "{{ uid }}:{{ gid }}"
-    volumes:
-      - /data/kamera/pristresek:/output
-      - /etc/localtime:/etc/localtime:ro
-    command:
-      - -loglevel error
-      - -rtsp_transport tcp
-      - -i rtsp://admin:1234567a@192.168.1.253:554//Streaming/Channels/1
-      - -c copy
-      - -segment_time 3600
-      - -segment_atclocktime 1
-      - -strftime 1
-      - -f segment /output/%d-%m_%H-%M.ts
-
-# Kamera - Najezd
-- name: Creating Kamera_Najezd container
-  docker_container:
-    name: kamera-najezd
-    image: jrottenberg/ffmpeg
-    user: "{{ uid }}:{{ gid }}"
-    volumes:
-      - /data/kamera/najezd:/output
-      - /etc/localtime:/etc/localtime:ro
-    command:
-      - -loglevel error
-      - -rtsp_transport tcp
-      - -i rtsp://admin:1234567a@192.168.1.254:554//Streaming/Channels/1
       - -c copy
       - -segment_time 3600
       - -segment_atclocktime 1
