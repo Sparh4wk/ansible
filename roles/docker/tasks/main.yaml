@@ -17,12 +17,12 @@
       dest: /etc/systemd/system/camera-prune.service
       owner: root
       group: root
-      mode: 0644
+      mode: "u=rw,g=r,o=r"
     - src: prune.j2.timer
       dest: /etc/systemd/system/camera-prune.timer
       owner: root
       group: root
-      mode: 0644
+      mode: "u=rw,g=r,o=r"
 
 - name: Enable camera prune timer
   systemd:
