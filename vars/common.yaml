@@ -5,3 +5,9 @@ sshkey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkoEgncprzbxFbTOrgZlgNiTqT2b+qkpaF
 
 personal_zsh_environment:
   EDITOR: nano
+
+git_config:
+  - user.name: Sparh4wk
+  - user.email: sp4rh4wk@gmail.com
+  - push.default: simple
+  - credential.helper: store
