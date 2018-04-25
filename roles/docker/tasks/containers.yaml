@@ -72,9 +72,8 @@
     devices: 
       - /dev/dri/renderD128
     volumes:
-      - /data/config/emby/:/config
-      - /data/Downloads/TV:/mnt/share1
-      - /data/Downloads/Movies:/mnt/share2
+      - /data/config/emby:/config
+      - /data/Downloads:/downloads
     ports:
       - 8096:8096
       - 8920:8920
