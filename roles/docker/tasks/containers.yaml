@@ -14,22 +14,13 @@
     - { path: /data/config/jdownloader2 }
     - { path: /data/config/qbittorrent }
     - { path: /data/config/radarr }
-    #- { path: /data/config/seafile }
     - { path: /data/config/sonarr }
-    #- { path: /data/config/syncthing }
     - { path: /data/Downloads }
-    #- { path: /data/kamera/najezd }
-    #- { path: /data/kamera/pristresek }
-    #- { path: /data/kamera/terasa }
-    #- { path: /data/kamera/vpredu }
-    #- { path: /data/kamera/zahon }
     - { path: /data/kamera }
-    #- { path: /data/seafile }
-    #- { path: /data/syncthing }
   loop_control:
     label: "{{ item.path }}"
 
-# Aria2c
+# Aria2c  
 - name: Creating Aria2 container
   docker_container:
     name: aria2
@@ -182,7 +173,6 @@
     ports:
       - 80:80
       - 443:443
-    user: "{{ uid }}:{{ gid }}"
     env:
       SEAFILE_ADMIN_EMAIL: sp4rh4wk@gmail.com
       SEAFILE_ADMIN_PASSWORD: Nede.230le
@@ -217,7 +207,7 @@
 #      PUID: "{{ uid }}"
 
 # Kamera
-- name: Creating Kamera_Terasa container
+- name: Creating Kamera container
   docker_container:
     name: kamera
     image: jrottenberg/ffmpeg
@@ -228,7 +218,7 @@
     command:
       - -loglevel error
       - -rtsp_transport tcp
-      - -i rtsp://admin:1234567a@192.168.1.250:554//Streaming/Channels/1
+      - -i rtsp://sparhawk:Nede230le@192.168.1.64:554/Streaming/Channels/1
       - -c copy
       - -segment_time 3600
       - -segment_atclocktime 1
