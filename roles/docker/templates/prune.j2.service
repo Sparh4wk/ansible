@@ -1,0 +1,9 @@
+[Unit]
+Description=Prune cam footage
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/find {{ camera.path }} -name "*.ts" -mtime +{{ camera.keepDays - 1 }} -exec rm {} \;
+
+[Install]
+WantedBy=multi-user.target
