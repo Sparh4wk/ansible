@@ -73,7 +73,7 @@
       - /dev/dri/renderD128
     volumes:
       - /data/config/emby:/config
-      - /data/Downloads:/downloads
+      - /data:/downloads
     ports:
       - 8096:8096
       - 8920:8920
