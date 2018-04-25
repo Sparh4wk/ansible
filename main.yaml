@@ -30,6 +30,13 @@
     - { role: ssh, become: yes }
 
   tasks:
+    - name: Global Git configuration
+      git_config:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        scope: global
+      with_dict: "{{ git_config }}"
+
     - block:
       - name: Set timezone
         timezone:
