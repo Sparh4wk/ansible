@@ -173,7 +173,7 @@
       - /data/seafile:/shared
       - /data/config/seafile:/shared/seafile/conf
     ports:
-      - 80:80
+      - 8000:80
       - 443:443
     env:
       SEAFILE_ADMIN_EMAIL: sp4rh4wk@gmail.com
