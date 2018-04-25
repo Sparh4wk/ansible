@@ -1,4 +1,4 @@
 ---
 camera:
   path: /data/kamera
-  keepDays: 7
+  keepDays: 14
