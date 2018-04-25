@@ -14,7 +14,7 @@
     - { path: /data/config/jdownloader2 }
     - { path: /data/config/qbittorrent }
     - { path: /data/config/radarr }
-    - { path: /data/config/seafile }
+    #- { path: /data/config/seafile }
     - { path: /data/config/sonarr }
     #- { path: /data/config/syncthing }
     - { path: /data/Downloads }
@@ -24,8 +24,7 @@
     #- { path: /data/kamera/vpredu }
     #- { path: /data/kamera/zahon }
     - { path: /data/kamera }
-    - { path: /data/seafile }
-    - { path: /data/seafile }
+    #- { path: /data/seafile }
     #- { path: /data/syncthing }
   loop_control:
     label: "{{ item.path }}"
