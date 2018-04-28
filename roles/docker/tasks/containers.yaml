@@ -69,6 +69,7 @@
   docker_container:
     name: emby
     image: emby/embyserver
+    restart_policy: always
     devices: 
       - /dev/dri/renderD128
     volumes:
@@ -87,7 +88,7 @@
     name: jackett
     image: linuxserver/jackett
     state: stopped
-    restart_policy: on-failure
+    restart_policy: always
     volumes:
       - /data/config/jackett:/config
       - /data/Downloads:/downloads
@@ -169,6 +170,7 @@
   docker_container:
     name: seafile
     image: seafileltd/seafile:latest
+    restart_policy: always
     volumes:
       - /data/seafile:/shared
       - /data/config/seafile:/shared/seafile/conf
