@@ -87,7 +87,6 @@
   docker_container:
     name: jackett
     image: linuxserver/jackett
-    state: stopped
     restart_policy: always
     volumes:
       - /data/config/jackett:/config
@@ -140,6 +139,7 @@
       - /data/config/radarr:/config
       - /data/Downloads:/downloads
       - /etc/localtime:/etc/localtime:ro
+      - /data/Movies:/movies
     ports:
       - 7878:7878
     env:
@@ -190,6 +190,7 @@
       - /data/config/sonarr:/config
       - /data/Downloads:/downloads
       - /etc/localtime:/etc/localtime:ro
+      - /data/TV:/tv
     ports:
       - 8989:8989
     env:
