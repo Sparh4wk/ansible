@@ -1,9 +1,0 @@
-gid: "{{ ansible_user_gid }}"
-uid: "{{ ansible_user_uid }}"
-
-mountpoints:
-  - path: /data
-    src: UUID=e507e91d-0b7c-4ece-9f22-7c36b180d6c0
-    fstype: btrfs
-    opts: user # user,subvol=@
-    state: mounted
