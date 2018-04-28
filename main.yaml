@@ -52,6 +52,8 @@
           - htop
           - git
           - mc
+          - openssh-server
+          - speedtest-cli
 
       - name: Install Rmate
         get_url:
