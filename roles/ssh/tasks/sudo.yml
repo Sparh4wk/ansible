@@ -1,0 +1,19 @@
+---
+- name: Make sure sudo group exists
+  group:
+    name: sudo
+    state: present
+    
+- name: make sure we are part of the sudo group
+  user:
+    name: '{{ user }}'
+    groups: sudo
+    append: yes
+
+- name: configure sudo for sudo group
+  template:
+    src: sudo.j2
+    dest: /etc/sudoers.d/sudo
+    owner: root
+    group: root
+    mode: "u=r,g=r"

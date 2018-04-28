@@ -1,0 +1,11 @@
+---
+# Dict with personal ZSH environment.
+personal_zsh_environment: {}
+
+# Dict with global ZSH environment.
+global_zsh_environment:
+  WORKON_HOME: $HOME/.virtualenvs
+
+sshd: ssh
+sshd_config: /etc/ssh/sshd_config
+zsh_path: /usr/bin/zsh

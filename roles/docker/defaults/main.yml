@@ -1,0 +1,5 @@
+---
+docker_channel: stable
+camera:
+  path: /data/kamera
+  keepDays: 14

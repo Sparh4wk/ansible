@@ -1,0 +1,53 @@
+---
+- include_tasks: ubuntu-setup.yml
+  when: ansible_distribution == "Ubuntu"
+
+- become: yes
+  pacman:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - docker
+    - python2-docker
+  when: ansible_os_family == "Archlinux"
+
+- name: Ensure Docker is started and enabled at boot
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add user to Docker group
+  user:
+    name: "{{ user }}"
+    groups: docker
+    append: yes
+
+- name: Set up containers
+  import_tasks: containers.yml
+
+- name: Install camera prune service and timer
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - src: prune.j2.service
+      dest: /etc/systemd/system/camera-prune.service
+      owner: root
+      group: root
+      mode: "u=rw,g=r,o=r"
+    - src: prune.j2.timer
+      dest: /etc/systemd/system/camera-prune.timer
+      owner: root
+      group: root
+      mode: "u=rw,g=r,o=r"
+
+- name: Enable camera prune timer
+  systemd:
+    name: camera-prune.timer
+    state: started
+    enabled: yes
