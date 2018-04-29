@@ -71,8 +71,6 @@
     name: emby
     image: emby/embyserver
     restart_policy: always
-    devices: 
-      - /dev/dri/renderD128
     volumes:
       - /data/config/emby:/config
       - /data:/downloads
