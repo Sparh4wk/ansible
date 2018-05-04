@@ -120,13 +120,19 @@
     name: plex
     image: linuxserver/plex
     restart_policy: always
-    network_mode: host
     volumes:
       - /data/.config/.plex:/config
       - /data/TV/:/data/tvshows
       - /data/Movies:/data/movies
       - /data/Downloads/transcode:/transcode
       - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 32400:32400
+      - 32400:32400/udp
+      - 32469:32469
+      - 32469:32469/udp
+      - 5353:5353/udp
+      - 1900:1900/udp
     env:
       PGID: "{{ gid }}"
       PUID: "{{ uid }}"
