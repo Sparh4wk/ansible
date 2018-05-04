@@ -121,7 +121,7 @@
     image: linuxserver/plex
     restart_policy: always
     volumes:
-      - /data/.config/.plex:/config
+      - /data/config/plex:/config
       - /data/TV/:/data/tvshows
       - /data/Movies:/data/movies
       - /data/Downloads/transcode:/transcode
