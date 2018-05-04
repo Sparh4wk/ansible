@@ -9,7 +9,7 @@
     - { path: /data/config/aria2 }
     - { path: /data/config/asf }
     #- { path: /data/config/duplicati }
-    - { path: /data/config/emby }
+    #- { path: /data/config/emby }
     - { path: /data/config/jackett }
     - { path: /data/config/jdownloader2 }
     - { path: /data/config/qbittorrent }
@@ -66,20 +66,20 @@
 #      PUID: "{{ uid }}"
 
 # Emby
-- name: Creating Emby container
-  docker_container:
-    name: emby
-    image: emby/embyserver
-    restart_policy: always
-    volumes:
-      - /data/config/emby:/config
-      - /data:/downloads
-    ports:
-      - 8096:8096
-      - 8920:8920
-    env:
-      PGID: "{{ gid }}"
-      PUID: "{{ uid }}"
+#- name: Creating Emby container
+#  docker_container:
+#    name: emby
+#    image: emby/embyserver
+#    restart_policy: always
+#    volumes:
+#      - /data/config/emby:/config
+#      - /data:/downloads
+#    ports:
+#      - 8096:8096
+#      - 8920:8920
+#    env:
+#      PGID: "{{ gid }}"
+#      PUID: "{{ uid }}"
 
 # Jackett
 - name: Creating Jackett container
