@@ -12,6 +12,7 @@
     #- { path: /data/config/emby }
     - { path: /data/config/jackett }
     - { path: /data/config/jdownloader2 }
+    - { path: /data/config/plex }
     - { path: /data/config/qbittorrent }
     - { path: /data/config/radarr }
     - { path: /data/config/sonarr }
@@ -112,6 +113,23 @@
     env:
       USER_ID: "{{ uid }}"
       GROUP_ID: "{{ gid }}"
+
+# Plex
+- name: Creating Plex container
+  docker_container:
+    name: plex
+    image: linuxserver/plex
+    restart_policy: always
+    network_mode: host
+    volumes:
+      - /data/.config/.plex:/config
+      - /data/TV/:/data/tvshows
+      - /data/Movies:/data/movies
+      - /data/Downloads/transcode:/transcode
+      - /etc/localtime:/etc/localtime:ro
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
 
 # QBittorrent
 - name: Creating QBittorrent container
