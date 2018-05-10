@@ -27,6 +27,7 @@
     name: aria2
     restart_policy: always
     image: abcminiuser/docker-aria2-with-webui
+    pull: true
     volumes:
       - /data/Downloads:/data
       - /data/config/aria2:/config
@@ -44,6 +45,7 @@
   docker_container:
     name: asf
     image: justarchi/archisteamfarm
+    pull: true
     user: "{{ uid }}:{{ gid }}"
     volumes:
       - /data/config/asf:/app/config
@@ -56,6 +58,7 @@
 #    name: duplicati
 #    restart_policy: always
 #    image: linuxserver/duplicati
+#    pull: true
 #    volumes:
 #      - /data/config/duplicati:/config
 #      - /data:/source
@@ -71,6 +74,7 @@
 #  docker_container:
 #    name: emby
 #    image: emby/embyserver
+#    pull: true
 #    restart_policy: always
 #    volumes:
 #      - /data/config/emby:/config
@@ -87,6 +91,7 @@
   docker_container:
     name: jackett
     image: linuxserver/jackett
+    pull: true
     restart_policy: always
     volumes:
       - /data/config/jackett:/config
@@ -104,6 +109,7 @@
     name: jdownloader2
     restart_policy: always
     image: jlesage/jdownloader-2
+    pull: true
     volumes:
       - /data/config/jdownloader2:/config
       - /data/Downloads:/output
@@ -119,6 +125,8 @@
   docker_container:
     name: plex
     image: linuxserver/plex
+    pull: true
+    network_mode: host
     restart_policy: always
     volumes:
       - /data/config/plex:/config
@@ -126,16 +134,10 @@
       - /data/Movies:/data/movies
       - /data/Downloads/transcode:/transcode
       - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 32400:32400
-      - 32400:32400/udp
-      - 32469:32469
-      - 32469:32469/udp
-      - 5353:5353/udp
-      - 1900:1900/udp
     env:
       PGID: "{{ gid }}"
       PUID: "{{ uid }}"
+      VERSION: "latest"
 
 # QBittorrent
 - name: Creating QBittorrent container
@@ -143,6 +145,7 @@
     name: qbittorrent
     restart_policy: always
     image: linuxserver/qbittorrent
+    pull: true 
     volumes:
       - /data/config/qbittorrent:/config
       - /data/Downloads:/downloads
@@ -161,6 +164,7 @@
     name: radarr
     restart_policy: always
     image: linuxserver/radarr
+    pull: true
     volumes:
       - /data/config/radarr:/config
       - /data/Downloads:/downloads
@@ -178,6 +182,7 @@
     name: samba
     restart_policy: always
     image: dperson/samba
+    pull: true
     volumes:
       - /data:/share/
       - /etc/localtime:/etc/localtime:ro
@@ -197,6 +202,7 @@
   docker_container:
     name: seafile
     image: seafileltd/seafile:latest
+    pull: true
     restart_policy: always
     volumes:
       - /data/seafile:/shared
@@ -214,6 +220,7 @@
     name: sonarr
     restart_policy: always
     image: linuxserver/sonarr
+    pull: true
     volumes:
       - /data/config/sonarr:/config
       - /data/Downloads:/downloads
@@ -231,6 +238,7 @@
 #    name: syncthing
 #    restart_policy: always
 #    image: linuxserver/syncthing
+#    pull: true
 #    volumes:
 #      - /data/config/syncthing:/config
 #      - /data/syncthing:/data
@@ -246,6 +254,7 @@
     name: kamera
     restart_policy: always
     image: jrottenberg/ffmpeg
+    pull: true
     user: "{{ uid }}:{{ gid }}"
     volumes:
       - /data/kamera:/output
