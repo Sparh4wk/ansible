@@ -9,10 +9,11 @@
     - { path: /data/config/aria2 }
     - { path: /data/config/asf }
     #- { path: /data/config/duplicati }
-    #- { path: /data/config/emby }
+    - { path: /data/config/emby }
     - { path: /data/config/jackett }
     - { path: /data/config/jdownloader2 }
-    - { path: /data/config/plex }
+    #- { path: /data/config/pihole }
+    #- { path: /data/config/plex }
     - { path: /data/config/qbittorrent }
     - { path: /data/config/radarr }
     - { path: /data/config/sonarr }
@@ -70,21 +71,21 @@
 #      PUID: "{{ uid }}"
 
 # Emby
-#- name: Creating Emby container
-#  docker_container:
-#    name: emby
-#    image: emby/embyserver
-#    pull: true
-#    restart_policy: always
-#    volumes:
-#      - /data/config/emby:/config
-#      - /data:/downloads
-#    ports:
-#      - 8096:8096
-#      - 8920:8920
-#    env:
-#      PGID: "{{ gid }}"
-#      PUID: "{{ uid }}"
+- name: Creating Emby container
+  docker_container:
+    name: emby
+    image: emby/embyserver
+    pull: true
+    restart_policy: always
+    volumes:
+      - /data/config/emby:/config
+      - /data:/downloads
+    ports:
+      - 8096:8096
+      - 8920:8920
+    env:
+      PGID: "{{ gid }}"
+      PUID: "{{ uid }}"
 
 # Jackett
 - name: Creating Jackett container
@@ -120,24 +121,43 @@
       USER_ID: "{{ uid }}"
       GROUP_ID: "{{ gid }}"
 
+# Pihole
+#- name: Creating Pihole container
+#  docker_container:
+#    name: pihole
+#    restart_policy: always
+#    image: diginc/pi-hole
+#    pull: true
+#    volumes:
+#      - /data/config/pihole/pihole/:/etc/pihole
+#      - /data/config/pihole/dnsmasq.d/:/etc/dnsmasq.d/
+#    ports:
+#      - 80:80
+#      - 53:53
+#    env:
+#      ServerIP: "192.168.1.174"
+#      WEBPASSWORD: "Nede.230le"
+#      PGID: "{{ gid }}"
+#      PUID: "{{ uid }}"
+
 # Plex
-- name: Creating Plex container
-  docker_container:
-    name: plex
-    image: linuxserver/plex
-    pull: true
-    network_mode: host
-    restart_policy: always
-    volumes:
-      - /data/config/plex:/config
-      - /data/TV/:/data/tvshows
-      - /data/Movies:/data/movies
-      - /data/Downloads/transcode:/transcode
-      - /etc/localtime:/etc/localtime:ro
-    env:
-      PGID: "{{ gid }}"
-      PUID: "{{ uid }}"
-      VERSION: "latest"
+#- name: Creating Plex container
+#  docker_container:
+#    name: plex
+#    image: linuxserver/plex
+#    pull: true
+#    network_mode: host
+#    restart_policy: always
+#    volumes:
+#      - /data/config/plex:/config
+#      - /data/TV/:/data/tvshows
+#      - /data/Movies:/data/movies
+#      - /data/Downloads/transcode:/transcode
+#      - /etc/localtime:/etc/localtime:ro
+#    env:
+#      PGID: "{{ gid }}"
+#      PUID: "{{ uid }}"
+#      VERSION: "latest"
 
 # QBittorrent
 - name: Creating QBittorrent container
@@ -208,7 +228,7 @@
       - /data/seafile:/shared
       - /data/config/seafile:/shared/seafile/conf
     ports:
-      - 8000:80
+      - 8881:80
       - 443:443
       - 8081:8080
     env:
